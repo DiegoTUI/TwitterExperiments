@@ -1,0 +1,21 @@
+{
+  "name": "TwitterExperiments",
+  "description": "A simple server to produce a map and paint tweets from a mongo database",
+  "version": "0.0.1",
+  "author": {
+    "name": "Diego Lafuente",
+    "email": "dlafuente@tuitravel-ad.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/DiegoTUI/TwitterExperiments.git"
+  },
+  "dependencies": {
+    "express": "4.7.x",
+    "mongodb": "1.4.x",
+    "log":"1.4.x"
+  },
+  "engines": {
+    "node": ">= 0.8.0"
+  }
+}
