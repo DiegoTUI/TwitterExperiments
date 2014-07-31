@@ -2,10 +2,10 @@
 
 var express = require('express');
 
-var app = express()
+var app = express();
 
 app.get('/', function (req, res) {
-  res.sendfile('html/twitter_map.html')
-})
+  res.sendfile('html/twitter_map.html');
+});
 
-app.listen(80)
+app.listen(3123);
