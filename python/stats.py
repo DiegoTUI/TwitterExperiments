@@ -74,7 +74,7 @@ def main():
     print total
     print "**** LANGUAGES ****"
     sortedLanguages = sorted(languages, key=languages.get, reverse=True)
-    for language in sortedLanguages:
+    for language in sortedLanguages:i
         print "{0} - {1}".format(language, languages[language])
     print "**** PLACES ****"
     sortedPlaces = sorted(places, key=places.get, reverse=True)

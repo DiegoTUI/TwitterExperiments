@@ -17,6 +17,7 @@ class _Main(object):
         Trace.error('  Parameters:')
         Trace.error('    --sw: longitude,latitude coordinates of the South West corner of the bounding box. Compulsory.')
         Trace.error('    --ne: longitude,latitude coordinates of the North East corner of the bounding box. Compulsory.')
+        Trace.error('Example: python run_location_stream.py -sw -11.733398,35.763229 -ne 5.009766,42.970492')
 
     def keyboard_interrupt_handler(self, signal, frame):
         "handles KeyboardInterrupt signal"
