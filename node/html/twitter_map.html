@@ -57,9 +57,9 @@
           var icon = blueIcon;
           if (tweet.lang == "es") {
             icon = redIcon;
-          } else if (tweet.lang = "en") {
+          } else if (tweet.lang == "en") {
             icon = greenIcon;
-          } else if (tweet.lang = "de") {
+          } else if (tweet.lang == "de") {
             icon = orangeIcon;
           }
           var marker = new OpenLayers.Marker(getCoords(tweet.coordinates[1], tweet.coordinates[0]), icon.clone());
