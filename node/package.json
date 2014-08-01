@@ -13,6 +13,8 @@
   "dependencies": {
     "express": "4.7.x",
     "mongodb": "1.4.x",
+    "socket.io": "1.0.x",
+    "twitter": "0.2.x",
     "log":"1.4.x"
   },
   "engines": {

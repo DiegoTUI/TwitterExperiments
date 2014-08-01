@@ -1,14 +1,7 @@
 <!DOCTYPE html>
-
-<!--
-  Para construir un fichero de coordenadas a partir de un access.log de nginx:
-  
-  grep -o "latitude=\-\?[0-9.]*&longitude=\-\?[0-9.]*" FILENAME | sort | uniq -u | sed 's/&/|/g' | sed 's/=/|/g' | cut -d '|' -f 2,4
--->
-
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
     <head>
-        <title>GuideGo Accesses</title>
+        <title>Geolocated Tweets - TUI Innovation Lab</title>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <style>
     html,body{height:100%;margin:0;padding:.5em;font-family:Arial;}
@@ -18,67 +11,65 @@
     </head>
 
     <body>
+      <p>Click on the map while you hold the SHIFT key in order to zoom.</p>
+      <div id="map"></div>
+    
+      <script src="//openlayers.org/dev/OpenLayers.js"></script>
+      <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+      <script src="/socket.io/socket.io.js"></script>
+      <script>
 
-    <p>Para hacer zoom a una superfície concreta, pulsar sobre el mapa con la tecla SHIFT pulsada.</p>
-    <div id="map"></div>
-  
-    <script src="//openlayers.org/dev/OpenLayers.js"></script>
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-    <script>
-
-    var map, layer, markers, proj, icon;
-    
-    function initMap() {
-      proj = new OpenLayers.Projection("EPSG:4326");
-      map = new OpenLayers.Map('map', {
-        projection: new OpenLayers.Projection("EPSG:900913"),
-        displayProjection: proj
-      });
-      map.addControl(new OpenLayers.Control.ZoomBox());
+      var map, layer, markers, proj, redIcon, blueIcon, greenIcon, orangeIcon;
       
-      layer = new OpenLayers.Layer.OSM("GuideGo");
-      map.addLayer(layer);
-    
-      markers = new OpenLayers.Layer.Markers("Markers");
-      map.addLayer(markers);
-    
-      map.setCenter(
-          new OpenLayers.LonLat(-9.411163,36.173357).transform(
-          proj,
-          map.getProjectionObject()
-        ), 5
-      );
-      
-      map.zoomToMaxExtent();
-      
-      var size = new OpenLayers.Size(21,25);
-      var offset = new OpenLayers.Pixel(-(size.w/2), -size.h);
-      icon = new OpenLayers.Icon('http://www.openlayers.org/dev/img/marker.png', size, offset);
-    }
-    
-    function getCoords(lat, lon) {
-      return new OpenLayers.LonLat(lon, lat).transform(proj, map.getProjectionObject());
-    }
-    
-    $(document).ready(function() {
-      initMap();
-      //markers.addMarker(new OpenLayers.Marker(getCoords(36.173357,-9.411163), icon.clone()));
-      
-      // open coords file
-      $.get('coords.txt', function(data) {
-        var lines = data.split('\n');
-        //lines = lines.slice(1,200); // TEMPORAL CROP!
-        lines.forEach(function(line) {
-          var coords = line.split('|');
-          if(coords[0] && coords[1]) {
-            markers.addMarker(new OpenLayers.Marker(getCoords(coords[0], coords[1]), icon.clone()));
-          }
+      function initMap() {
+        proj = new OpenLayers.Projection("EPSG:4326");
+        map = new OpenLayers.Map('map', {
+          projection: new OpenLayers.Projection("EPSG:900913"),
+          displayProjection: proj
         });
-        map.zoomToExtent(markers.getDataExtent());  
+        map.addControl(new OpenLayers.Control.ZoomBox());
+        
+        layer = new OpenLayers.Layer.OSM("GuideGo");
+        map.addLayer(layer);
+      
+        markers = new OpenLayers.Layer.Markers("Markers");
+        map.addLayer(markers);
+      
+        map.setCenter(getCoords(39.64152,2.949829), 8);
+        
+        var size = new OpenLayers.Size(21,34);
+        var offset = new OpenLayers.Pixel(-(size.w/2), -size.h);
+        redIcon = new OpenLayers.Icon('./red_marker.png', size, offset);
+        blueIcon = new OpenLayers.Icon('./blue_marker.png', size, offset);
+        greenIcon = new OpenLayers.Icon('./green_marker.png', size, offset);
+        orangeIcon = new OpenLayers.Icon('./orange_marker.png', size, offset);
+      }
+      
+      function getCoords(lat, lon) {
+        return new OpenLayers.LonLat(lon, lat).transform(proj, map.getProjectionObject());
+      }
+      
+      $(document).ready(function() {
+        initMap();
+        // init socket
+        var socket = io();
+        socket.on("tweet", function(tweet) {
+          var icon = blueIcon;
+          if (tweet.lang == "es") {
+            icon = redIcon;
+          } else if (tweet.lang = "en") {
+            icon = greenIcon;
+          } else if (tweet.lang = "de") {
+            icon = orangeIcon;
+          }
+          var marker = new OpenLayers.Marker(getCoords(tweet.coordinates[1], tweet.coordinates[0]), icon.clone());
+          marker.events.register('mousedown', marker, function(event) { 
+            alert(tweet.text); 
+            OpenLayers.Event.stop(event); 
+          });
+          markers.addMarker(marker);
+        });
       });
-    
-    });
-    </script>
-    
+      </script>
     </body>
 </html>
